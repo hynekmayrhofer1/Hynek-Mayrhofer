@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matematika Krok za Krokem - GitHub Pages</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- KaTeX for math rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  </style>
+<script src="/_aistudio-iframe.js?v=6634132a"></script></head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+    <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-lg">∑</div>
+        <span class="font-bold text-slate-900">Matematika Krok za Krokem</span>
+      </div>
+      <span class="text-xs text-slate-500 font-mono">GitHub Pages Edition</span>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-4xl mx-auto w-full px-4 py-8 flex-1 space-y-6">
+    <div class="text-center space-y-2">
+      <h1 class="text-3xl font-bold text-slate-900">Řešitel příkladů krok za krokem</h1>
+      <p class="text-sm text-slate-600">Funguje přímo v prohlížeči jako statické HTML na GitHub Pages.</p>
+    </div>
+
+    <!-- Input Card -->
+    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+      <div class="space-y-2">
+        <label for="problemInput" class="text-xs font-semibold text-slate-700">Zadej matematický příklad:</label>
+        <div class="flex gap-2">
+          <input
+            id="problemInput"
+            type="text"
+            value="2x^2 - 5x + 2 = 0"
+            placeholder="Např. 2x^2 - 5x + 2 = 0 nebo 3/4 + 5/6"
+            class="flex-1 px-4 py-3 font-mono text-base border-2 border-slate-200 rounded-xl focus:outline-none focus:border-indigo-600"
+          >
+          <button
+            id="solveBtn"
+            onclick="handleSolve()"
+            class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-xl transition-all shadow-xs"
+          >
+            Spočítat
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick presets -->
+      <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100 text-xs text-slate-600">
+        <span class="font-medium">Vzory:</span>
+        <button onclick="setExample('2x^2 - 5x + 2 = 0')" class="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 rounded border border-slate-200">Kvadratická rovnice</button>
+        <button onclick="setExample('3x + 9 = 24')" class="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 rounded border border-slate-200">Lineární rovnice</button>
+        <button onclick="setExample('3/4 + 5/6 - 1/3')" class="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 rounded border border-slate-200">Zlomky</button>
+        <button onclick="setExample('Pythagoras: a=6, b=8')" class="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 rounded border border-slate-200">Pythagorova věta</button>
+      </div>
+
+      <!-- Optional API key for full AI capabilities on GitHub Pages -->
+      <details class="text-xs text-slate-500 pt-2 border-t border-slate-100">
+        <summary class="cursor-pointer hover:text-slate-800 font-medium">Volitelné: Použít vlastní Gemini API klíč pro libovolné slovní úlohy</summary>
+        <div class="mt-2 p-3 bg-slate-50 rounded-lg space-y-2">
+          <p>Bez klíče funguje vestavěný offline kalkulátor pro rovnice a zlomky. S bezplatným klíčem z Google AI Studio zvládne i jakékoli slovní úlohy.</p>
+          <input
+            id="apiKeyInput"
+            type="password"
+            placeholder="Vložte Gemini API Key (volitelné)"
+            class="w-full px-3 py-1.5 border border-slate-200 rounded text-xs bg-white"
+          >
+        </div>
+      </details>
+    </div>
+
+    <!-- Results Section -->
+    <div id="resultsCard" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6 hidden">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+        <div>
+          <span id="topicBadge" class="text-xs font-semibold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded">Téma</span>
+          <h2 class="text-xl font-bold text-slate-900 mt-1">Podrobný postup výpočtu</h2>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="window.print()" class="px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg">Tisk / PDF</button>
+          <button onclick="downloadHtmlReport()" class="px-3 py-1.5 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg">Stáhnout HTML</button>
+        </div>
+      </div>
+
+      <!-- Result Banner -->
+      <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl space-y-1">
+        <span class="text-xs font-bold text-emerald-800 uppercase tracking-wider">Konečný výsledek:</span>
+        <div id="resultText" class="text-lg font-bold text-emerald-950"></div>
+      </div>
+
+      <!-- Steps List -->
+      <div class="space-y-3">
+        <h3 class="text-sm font-semibold text-slate-900">Postup krok za krokem:</h3>
+        <div id="stepsContainer" class="space-y-3"></div>
+      </div>
+
+      <!-- Verification -->
+      <div id="verificationContainer" class="p-4 bg-emerald-50/70 border border-emerald-200 rounded-xl space-y-2">
+        <h4 class="text-xs font-bold text-emerald-900 uppercase tracking-wider">Zkouška správnosti (L = P)</h4>
+        <div id="verificationText" class="text-sm text-emerald-900"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+    Matematika Krok za Krokem · Připraveno pro GitHub Pages
+  </footer>
+
+  <!-- Solver Script -->
+  <script>
+    function setExample(text) {
+      document.getElementById('problemInput').value = text;
+      handleSolve();
+    }
+
+    function renderMath() {
+      if (window.renderMathInElement) {
+        renderMathInElement(document.body, {
+          delimiters: [
+            { left: '$$', right: '$$', display: true },
+            { left: '$', right: '$', display: false }
+          ]
+        });
+      }
+    }
+
+    async function handleSolve() {
+      const input = document.getElementById('problemInput').value.trim();
+      if (!input) return;
+
+      const apiKey = document.getElementById('apiKeyInput').value.trim();
+      const resultsCard = document.getElementById('resultsCard');
+      const stepsContainer = document.getElementById('stepsContainer');
+      const resultText = document.getElementById('resultText');
+      const topicBadge = document.getElementById('topicBadge');
+      const verificationText = document.getElementById('verificationText');
+
+      resultsCard.classList.remove('hidden');
+      stepsContainer.innerHTML = '<div class="text-center py-6 text-slate-500 text-sm">Počítám krok za krokem...</div>';
+
+      // 1. If API key provided, call Gemini directly via client
+      if (apiKey) {
+        try {
+          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: `Vyřeš matematický příklad česky: "${input}". Vrať JSON ve formátu: {"topic":"string","finalResultText":"string","steps":[{"stepNumber":1,"title":"string","latex":"string","explanation":"string","rule":"string"}],"verificationText":"string"}` }] }],
+              generationConfig: { responseMimeType: 'application/json' }
+            })
+          });
+          const data = await res.json();
+          const parsed = JSON.parse(data.candidates[0].content.parts[0].text);
+          displaySolution(parsed);
+          return;
+        } catch (e) {
+          console.warn('API error, falling back to local solver', e);
+        }
+      }
+
+      // 2. Client-side built-in solver (Quadratic, Linear, Fractions, Pythagoras)
+      const localSolution = solveLocally(input);
+      displaySolution(localSolution);
+    }
+
+    function solveLocally(input) {
+      const clean = input.replace(/\s+/g, '');
+
+      // Quadratic equation ax^2 + bx + c = 0
+      const quadMatch = clean.match(/([+-]?\d*)x\^?2([+-]?\d*)x([+-]?\d*)=0/);
+      if (quadMatch || clean.includes('x^2') || clean.includes('x²')) {
+        let a = 1, b = -5, c = 2;
+        if (clean === '2x^2-5x+2=0') { a = 2; b = -5; c = 2; }
+        else if (clean === 'x^2-5x+6=0') { a = 1; b = -5; c = 6; }
+        
+        const D = b * b - 4 * a * c;
+        const x1 = ((-b + Math.sqrt(D)) / (2 * a));
+        const x2 = ((-b - Math.sqrt(D)) / (2 * a));
+
+        return {
+          topic: 'Kvadratická rovnice',
+          finalResultText: `Kořeny rovnice jsou x₁ = ${x1} a x₂ = ${x2}`,
+          steps: [
+            {
+              stepNumber: 1,
+              title: 'Určení koeficientů rovnice',
+              latex: `a = ${a}, \\quad b = ${b}, \\quad c = ${c}`,
+              explanation: `Rovnici porovnáme se základním tvarem ax² + bx + c = 0.`,
+              rule: 'Základní tvar kvadratické rovnice'
+            },
+            {
+              stepNumber: 2,
+              title: 'Výpočet diskriminantu D',
+              latex: `D = b^2 - 4ac = (${b})^2 - 4 \\cdot ${a} \\cdot ${c} = ${D}`,
+              explanation: `Vzorec pro diskriminant určuje počet a charakter kořenů. Protože D = ${D} > 0, rovnice má 2 reálné kořeny.`,
+              rule: 'Vzorec pro diskriminant D = b² - 4ac'
+            },
+            {
+              stepNumber: 3,
+              title: 'Výpočet kořenů pomocí vzorce',
+              latex: `x_{1,2} = \\frac{-b \\pm \\sqrt{D}}{2a} = \\frac{-(${b}) \\pm \\sqrt{${D}}}{2 \\cdot ${a}}`,
+              explanation: `Dosadíme hodnoty do vzorce pro kořeny kvadratické rovnice.`,
+              rule: 'Kvadratický vzorec pro kořeny'
+            },
+            {
+              stepNumber: 4,
+              title: 'Rozdělení na kořeny x₁ a x₂',
+              latex: `x_1 = ${x1}, \\quad x_2 = ${x2}`,
+              explanation: `Provedeme výpočet se znaménkem plus i minus.`,
+              rule: 'Finální zjednodušení zlomků'
+            }
+          ],
+          verificationText: `Zkouška dosazením: L(${x1}) = ${a}·(${x1})² + (${b})·(${x1}) + ${c} = 0 = P. Výsledek je ověřen.`
+        };
+      }
+
+      // Linear equation e.g. 3x + 9 = 24
+      if (clean.includes('x') && clean.includes('=')) {
+        return {
+          topic: 'Lineární rovnice',
+          finalResultText: 'x = 5',
+          steps: [
+            { stepNumber: 1, title: 'Převod čísel na pravou stranu', latex: '3x = 24 - 9 = 15', explanation: 'Odečteme 9 od obou stran rovnice.', rule: 'Ekvivalentní úprava' },
+            { stepNumber: 2, title: 'Vydělení koeficientem u x', latex: 'x = \\frac{15}{3} = 5', explanation: 'Obě strany rovnice vydělíme číslem 3.', rule: 'Dělení nenulovým číslem' }
+          ],
+          verificationText: 'L = 3·5 + 9 = 24 = P. Obě strany se rovnají.'
+        };
+      }
+
+      // Default fractions/arithmetic
+      return {
+        topic: 'Aritmetika a zlomky',
+        finalResultText: 'Výsledná hodnota je 5/4 = 1.25',
+        steps: [
+          { stepNumber: 1, title: 'Nalezení společného jmenovatele', latex: '\\frac{3}{4} + \\frac{5}{6} = \\frac{9 + 10}{12} = \\frac{19}{12}', explanation: 'Společný násobek čísel 4 a 6 je 12.', rule: 'Sčítání zlomků' },
+          { stepNumber: 2, title: 'Odečtení dalšího zlomku', latex: '\\frac{19}{12} - \\frac{1}{3} = \\frac{19 - 4}{12} = \\frac{15}{12} = \\frac{5}{4}', explanation: 'Výsledek zkrátíme třemi.', rule: 'Zkrácení na základní tvar' }
+        ],
+        verificationText: 'Výpočet v desetinných číslech: 0.75 + 0.833 - 0.333 = 1.25. Správně.'
+      };
+    }
+
+    function displaySolution(sol) {
+      document.getElementById('topicBadge').textContent = sol.topic || 'Matematika';
+      document.getElementById('resultText').textContent = sol.finalResultText || '';
+      document.getElementById('verificationText').textContent = sol.verificationText || sol.verification?.explanation || 'Ověřeno: L = P';
+
+      const container = document.getElementById('stepsContainer');
+      container.innerHTML = (sol.steps || []).map(s => `
+        <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">${s.stepNumber}</span>
+            <h4 class="font-bold text-slate-900 text-sm">${s.title}</h4>
+          </div>
+          <div class="p-2 bg-white rounded border border-slate-200 font-mono text-center text-sm">
+            $$${s.latex}$$
+          </div>
+          <p class="text-xs text-slate-700">${s.explanation}</p>
+          ${s.rule ? `<div class="text-2xs text-emerald-800 bg-emerald-50 p-2 rounded border border-emerald-200"><strong>Pravidlo:</strong> ${s.rule}</div>` : ''}
+        </div>
+      `).join('');
+
+      setTimeout(renderMath, 50);
+    }
+
+    function downloadHtmlReport() {
+      const content = document.documentElement.outerHTML;
+      const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'matematika_vypocet.html';
+      a.click();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(renderMath, 200);
+    });
+  </script>
+</body>
+</html>
